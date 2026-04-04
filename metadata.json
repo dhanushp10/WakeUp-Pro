@@ -1,0 +1,5 @@
+{
+  "name": "WakeUp Pro",
+  "description": "A smart alarm app with WiFi and Motion-based wake-up challenges.",
+  "requestFramePermissions": ["accelerometer", "gyroscope"]
+}

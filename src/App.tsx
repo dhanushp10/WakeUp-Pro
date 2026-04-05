@@ -83,10 +83,25 @@ type Screen = 'home' | 'add-type' | 'settings' | 'wifi-config' | 'motion-config'
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
-  const [alarms, setAlarms] = useState<Alarm[]>([
-    { id: '1', time: '06:00', period: 'AM', label: 'Morning Workout', type: 'wifi', enabled: true, repeat: ['M', 'T', 'W', 'T', 'F'] },
-    { id: '2', time: '07:30', period: 'AM', label: 'Morning Gym', type: 'motion', enabled: true, repeat: ['M', 'T', 'W', 'T', 'F'], config: { motion: { steps: 20, sensitivity: 'Medium', mode: 'Walk' } } },
-  ]);
+  const [alarms, setAlarms] = useState<Alarm[]>(() => {
+    const saved = localStorage.getItem('wakeup_pro_alarms');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse saved alarms", e);
+      }
+    }
+    return [
+      { id: '1', time: '06:00', period: 'AM', label: 'Morning Workout', type: 'wifi', enabled: true, repeat: ['M', 'T', 'W', 'T', 'F'] },
+      { id: '2', time: '07:30', period: 'AM', label: 'Morning Gym', type: 'motion', enabled: true, repeat: ['M', 'T', 'W', 'T', 'F'], config: { motion: { steps: 20, sensitivity: 'Medium', mode: 'Walk' } } },
+    ];
+  });
+
+  // Save alarms to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('wakeup_pro_alarms', JSON.stringify(alarms));
+  }, [alarms]);
 
   const [currentEdit, setCurrentEdit] = useState<Partial<Alarm>>({});
   const [triggeredAlarm, setTriggeredAlarm] = useState<Alarm | null>(null);
